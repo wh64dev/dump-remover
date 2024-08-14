@@ -1,0 +1,9 @@
+.env
+!.env.example
+
+# build artifact
+dump-remover
+out/
+
+# macos file cache
+.DS_Store

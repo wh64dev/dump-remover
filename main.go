@@ -3,8 +3,8 @@ package main
 import (
 	"flag"
 	"os"
-	"path/filepath"
-	"strings"
+	// "path/filepath"
+	// "strings"
 	"time"
 
 	"github.com/devproje/plog/log"
@@ -29,20 +29,20 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	_, err = os.Stat("/etc/pve")
-	if os.IsNotExist(err) {
-		log.Fatalln("current system is not proxmox!")
-		return
-	}
+	// _, err = os.Stat("/etc/pve")
+	// if os.IsNotExist(err) {
+	// 	log.Fatalln("current system is not proxmox!")
+	// 	return
+	// }
 
 	for _, f := range fs {
-		if f.IsDir() {
-			continue
-		}
+		// if f.IsDir() {
+		// 	continue
+		// }
 
-		if !strings.Contains(f.Name(), ".zst") && !strings.Contains(f.Name(), ".gz") && !strings.Contains(f.Name(), ".lzo") {
-			continue
-		}
+		// if !strings.Contains(f.Name(), ".zst") && !strings.Contains(f.Name(), ".gz") && !strings.Contains(f.Name(), ".lzo") {
+		// 	continue
+		// }
 
 		info, ferr := f.Info()
 		if ferr != nil {
@@ -51,8 +51,8 @@ func main() {
 		}
 
 		mt := info.ModTime()
-		if cur.Day()-mt.Day() <= int(interval) {
-			os.Remove(filepath.Join(path, f.Name()))
+		if cur.Day()-mt.Day() >= int(interval) {
+			// os.Remove(filepath.Join(path, f.Name()))
 			log.Infof("removed backup file for: %s\n", f.Name())
 			continue
 		}

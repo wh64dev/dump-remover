@@ -15,7 +15,6 @@ run: $(SRC)
 install:
 	install -d 	   $(INSTALL_DIR)
 	install -m 644 $(TARGET) 				$(INSTALL_DIR)
-	install -m 644 .env.example 			$(INSTALL_DIR)
 	ln -s 		   $(INSTALL_DIR)/$(TARGET) $(PREFIX)/bin/$(TARGET)
 
 uninstall:

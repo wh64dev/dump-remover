@@ -1,44 +1,32 @@
 package main
 
 import (
+	"flag"
 	"os"
 	"path/filepath"
-	"strconv"
 	"strings"
 	"time"
 
 	"github.com/devproje/plog/log"
-	"github.com/joho/godotenv"
+)
+
+var (
+	path     string
+	interval int
 )
 
 func init() {
-	exec, _ := os.Executable()
-	current := filepath.Dir(exec)
-	f, err := os.Stat(filepath.Join(current, ".env"))
-	if err != nil {
-		ex, _ := os.OpenFile(filepath.Join(current, ".env.example"), 0644, 'r')
-		var buf []byte
-		_, _ = ex.Read(buf)
-		_ = os.WriteFile(filepath.Join(current, ".env"), buf, 0644)
+	flag.StringVar(&path, "path", "/mnt", "dump backup directory")
+	flag.IntVar(&interval, "interval", 2, "remove dump backup n days before")
 
-		log.Fatalf(".env config not founded! Please write file first!\n")
-		return
-	}
-
-	godotenv.Load(f.Name())
+	flag.Parse()
 }
 
 func main() {
 	cur := time.Now()
-	fs, err := os.ReadDir(os.Getenv("TARGET_PATH"))
+	fs, err := os.ReadDir(path)
 	if err != nil {
 		log.Fatalln(err)
-	}
-
-	interval, err := strconv.ParseInt(os.Getenv("INTERVAL_DAY"), 10, 32)
-	if err != nil {
-		log.Fatalln("value must be to integer")
-		return
 	}
 
 	_, err = os.Stat("/etc/pve")
@@ -63,9 +51,8 @@ func main() {
 		}
 
 		mt := info.ModTime()
-
 		if cur.Day()-mt.Day() <= int(interval) {
-			os.Remove(f.Name())
+			os.Remove(filepath.Join(path, f.Name()))
 			log.Infof("removed backup file for: %s\n", f.Name())
 			continue
 		}
